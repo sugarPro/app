@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { observer } from 'mobx-react'
-import { Todo, Status } from '../types'
-import store from '../stores'
+import { Todo, Status } from '../types/todo'
+import store from '../stores/todo'
 const { changeStatus } = store
 
 const Item = observer((props: Todo) => {

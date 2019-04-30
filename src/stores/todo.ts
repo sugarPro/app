@@ -1,10 +1,11 @@
 
-import { Status, Todo } from "../types";
+import { Status, Todo } from "../types/todo";
 const { OPEN, DONE } = Status;
 import { generate } from 'shortid'
 
-import { observable, action } from "mobx";
+import { observable, action, computed, configure } from "mobx";
 
+configure({ enforceActions: "observed" })
 
 class AppStore {
   @observable public inputValue: string = ''
@@ -24,11 +25,29 @@ class AppStore {
     }
   ];
 
+  @computed get todoProgress() {
+    let undone = 0;
+    let done = 0;
+    this.todoList.map(item => {
+      const { status } = item;
+      if (status !== Status.DONE){
+        undone ++;
+      }else{
+        done++
+      }
+    })
+
+    return `${done} / ${undone + done}`;
+  }
+
   @action public handleInput = (ev: React.FormEvent<HTMLInputElement>) => {
     this.inputValue = ev.currentTarget.value
   }
 
   @action public handleSubmit = (ev: React.FormEvent) => {
+    if(!this.inputValue){
+      return;
+    }
     this.todoList.push({ title: this.inputValue, id: generate(), timeStamp: new Date().getTime(), status: Status.OPEN })
     this.inputValue = ''
   }
